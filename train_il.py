@@ -19,6 +19,16 @@ class NN(tf.keras.Model):
         #         - tf.keras.initializers.he_uniform or tf.keras.initializers.he_normal
 
 
+        initializer = tf.keras.initializers.GlorotUniform()
+
+        # Left: 0.99 success rate. Right: 
+        input_layer = tf.keras.layers.Input(shape=[in_size])
+        hidden_layer = tf.keras.layers.Dense(64, activation = 'tanh', kernel_initializer = initializer)(input_layer)
+        hidden_layer = tf.keras.layers.Dense(32, activation = 'tanh')(hidden_layer)
+        output_layer = tf.keras.layers.Dense(out_size)(hidden_layer)
+
+        self.model = tf.keras.Model(inputs=[input_layer], outputs=output_layer)
+
 
         ########## Your code ends here ##########
 
@@ -28,7 +38,7 @@ class NN(tf.keras.Model):
         # We want to perform a forward-pass of the network. Using the weights and biases, this function should give the network output for x where:
         # x is a (?,|O|) tensor that keeps a batch of observations
 
-
+        return self.model(x)
 
         ########## Your code ends here ##########
 
@@ -42,7 +52,10 @@ def loss(y_est, y):
     # At the end your code should return the scalar loss value.
     # HINT: Remember, you can penalize steering (0th dimension) and throttle (1st dimension) unequally
 
-
+    l_steering = tf.nn.l2_loss(y[:,0]-y_est[:,0])
+    l_throttle = tf.nn.l2_loss(y[:,1]-y_est[:,1])
+    l = l_steering*0.99 + l_throttle*0.01 # might need to change this for different action training.
+    return l
 
     ########## Your code ends here ##########
     
@@ -74,7 +87,12 @@ def nn(data, args):
         # 4. Run an optimization step on the weights.
         # Helpful Functions: tf.GradientTape(), tf.GradientTape.gradient(), tf.keras.Optimizer.apply_gradients
         
-        
+        with tf.GradientTape() as tape:
+            tape.watch(x)
+            y_est = nn_model(x)
+            current_loss = loss(y_est, y)
+        gs = tape.gradient(current_loss, nn_model.variables)
+        optimizer.apply_gradients(zip(gs, nn_model.variables))
 
         ########## Your code ends here ##########
 

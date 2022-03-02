@@ -49,6 +49,12 @@ if __name__ == '__main__':
             
             ######### Your code starts here #########
             # We want to compute the probabilities of each goal based on the (observation,action) pair, i.e. we will compute P(g | o, a) for all g.
+
+            # P(g | o , a) = P(o,g) * P(a |  o,g)/P(o,a)
+
+            # P(g | o , a) = P(g | o) * P(a |  o,g)/P(a | o)
+
+
             # The following variables will be sufficient:
             # - goals[scenario_name] is the list of goals, e.g. ['left','straight','right'] for the intersection scenario
             # - nn_models[goal] is the trained mixed density network, e.g. nn_models['left']
@@ -57,6 +63,16 @@ if __name__ == '__main__':
             # The code should set a variable called "probs" which is list keeping the probabilities associated with goals[scenario_name], respectively.
             # HINT: multivariate_normal from scipy.stats might be useful, which is already imported. Or you can implement it yourself, too.
 
+            probs = []
+            for g in goals[scenario_name]:
+                cur_model = nn_models[g]
+                y_est = cur_model(obs)
+                mu = y_est[0,:2]
+                A = np.reshape(y_est[0,2:], (2,2))
+                cov = A @ A.T + 0.001*np.eye(2)
+                a_prob = multivariate_normal.pdf(action, mean = mu, cov = cov)
+
+                probs.append(a_prob)
 
             ########## Your code ends here ##########
             

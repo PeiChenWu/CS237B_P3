@@ -59,6 +59,17 @@ if __name__ == '__main__':
             # At the end, your code should set a_robot variable as a 1x2 numpy array that consists of steering and throttle values, respectively
             # HINT: You can use np.clip to threshold a_robot with respect to the magnitude constraints
 
+            goals[scenario_name]
+            nn_models[goal]
+            scores
+            obs
+            optimal_action['left']
+
+            np.abs(a_robot[0]) <= max_steering and np.abs(a_robot[1]) <= max_throttle
+
+
+
+            a_robot = 
 
 
             ########## Your code ends here ##########
@@ -75,6 +86,20 @@ if __name__ == '__main__':
             # - a_human (1 x 2 numpy array) is the current action the user took when the observation is obs
             # At the end, your code should set probs variable as a 1 x |G| numpy array that consists of the probability of each goal under obs and a_human
             # HINT: This should be very similar to the part in intent_inference.py 
+
+
+            # Do I need to do np.sum(probs) like intent_inference?
+
+            probs = []
+            for g in goals[scenario_name]:
+                cur_model = nn_models[g]
+                y_est = cur_model(obs)
+                mu = y_est[0,:2]
+                A = np.reshape(y_est[0,2:], (2,2))
+                cov = A @ A.T + 0.001*np.eye(2)
+                a_prob = multivariate_normal.pdf(a_human, mean = mu, cov = cov)
+
+                probs.append(a_prob)
 
 
 
