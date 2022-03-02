@@ -72,7 +72,6 @@ def loss(y_est, y):
 
     return -tf.math.reduce_sum(a)/N
 
-    
     ########## Your code ends here ##########
 
 

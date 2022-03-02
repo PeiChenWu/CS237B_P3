@@ -59,22 +59,28 @@ if __name__ == '__main__':
             # At the end, your code should set a_robot variable as a 1x2 numpy array that consists of steering and throttle values, respectively
             # HINT: You can use np.clip to threshold a_robot with respect to the magnitude constraints
 
-            goals[scenario_name]
-            nn_models[goal]
-            scores
-            obs
-            optimal_action['left']
 
-            np.abs(a_robot[0]) <= max_steering and np.abs(a_robot[1]) <= max_throttle
+            a_robot_prob = []
+            for i,g in enumerate(goals[scenario_name]):
+                cur_model = nn_models[g]
+                y_est = cur_model(obs)
+                mu = y_est[0,:2]
+                A = np.reshape(y_est[0,2:], (2,2))
+                cov = A @ A.T + 0.001*np.eye(2)
+                P_g = np.mean(scores[:,i])
+                a_H_expected = multivariate_normal.pdf(optimal_action[g], mean = mu, cov = cov)
+                a_robot_prob.append(P_g*(optimal_action[g] - a_H_expected))
 
+            a_robot =  np.squeeze(np.sum(np.array(a_robot_prob),axis=0))
 
-
-            a_robot = 
+            a_robot[0] = np.max([np.min([max_steering, a_robot[0]]), -max_steering])
+            a_robot[1] = np.max([np.min([max_throttle, a_robot[1]]), -max_throttle])
 
 
             ########## Your code ends here ##########
             
             a_human = np.array([interactive_policy.steering, optimal_action[goals[scenario_name][0]][0,1]]).reshape(1,-1)
+
             
             ######### Your code starts here #########
             # Having seen the human_action, we want to infer the human intent.
@@ -88,8 +94,6 @@ if __name__ == '__main__':
             # HINT: This should be very similar to the part in intent_inference.py 
 
 
-            # Do I need to do np.sum(probs) like intent_inference?
-
             probs = []
             for g in goals[scenario_name]:
                 cur_model = nn_models[g]
@@ -100,8 +104,6 @@ if __name__ == '__main__':
                 a_prob = multivariate_normal.pdf(a_human, mean = mu, cov = cov)
 
                 probs.append(a_prob)
-
-
 
             ########## Your code ends here ##########
 

@@ -54,7 +54,6 @@ if __name__ == '__main__':
 
             # P(g | o , a) = P(g | o) * P(a |  o,g)/P(a | o)
 
-
             # The following variables will be sufficient:
             # - goals[scenario_name] is the list of goals, e.g. ['left','straight','right'] for the intersection scenario
             # - nn_models[goal] is the trained mixed density network, e.g. nn_models['left']
