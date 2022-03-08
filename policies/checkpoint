@@ -1,2 +1,2 @@
-model_checkpoint_path: "lanechange_right_ILDIST"
-all_model_checkpoint_paths: "lanechange_right_ILDIST"
+model_checkpoint_path: "lanechange_left_ILDIST"
+all_model_checkpoint_paths: "lanechange_left_ILDIST"

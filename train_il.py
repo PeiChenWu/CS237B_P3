@@ -21,7 +21,7 @@ class NN(tf.keras.Model):
 
         initializer = tf.keras.initializers.GlorotUniform()
 
-        # Left: 0.99 success rate. Right: 
+        # Left: 0.99 success rate. Right: 0.8. Straight: 0.75
         input_layer = tf.keras.layers.Input(shape=[in_size])
         hidden_layer = tf.keras.layers.Dense(64, activation = 'tanh', kernel_initializer = initializer)(input_layer)
         hidden_layer = tf.keras.layers.Dense(32, activation = 'tanh')(hidden_layer)

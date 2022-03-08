@@ -33,7 +33,6 @@ class NN(tf.keras.Model):
 
         self.model = tf.keras.Model(inputs=[input_layer], outputs=output_layer)
         
-        
         ########## Your code ends here ##########
 
     def call(self, x):
@@ -64,9 +63,9 @@ def loss(y_est, y):
     epsilon = 1e-3
     N = y.shape[0]
 
+    mu = y_est[:,:2]
     A = tf.reshape(y_est[:,2:], (N,2,2))
     cov = tf.matmul(A,A,transpose_b = True) + epsilon*tf.eye(2)
-    mu = y_est[:,:2]
     mvn = tfd.MultivariateNormalFullCovariance(loc=mu, covariance_matrix=cov)
     a = mvn.log_prob(y)
 
